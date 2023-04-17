@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100">
+
+    <!-- 첫번째 TextView -->
+    <TextView
+        android:layout_weight="20"
+        android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Dialog Title"
+        android:textSize="20sp" />
+
+    <!-- 두번째 MPAndroid chart -->
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="60"
+        android:layout_margin="16dp" />
+
+    <!-- 세번째 TextView -->
+    <TextView
+        android:layout_weight="20"
+        android:id="@+id/dialog_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Dialog Message"
+        android:textSize="16sp" />
+
+</LinearLayout>
