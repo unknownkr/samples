@@ -2,6 +2,7 @@ package com.example.chartexample;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -19,19 +20,28 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
+
+    private int age;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        View textView = findViewById(R.id.textView);
+        View textView1 = findViewById(R.id.text1);
+        textView1.setOnClickListener(view -> {
+            InputDialog dialog= new InputDialog(view.getContext(), data -> age = data);
+            dialog.show();
+        });
 
-        textView.setOnClickListener(this::createDialog);
+        View textView2 = findViewById(R.id.text2);
+
+        textView2.setOnClickListener(this::createDialog);
     }
 
     private void createDialog(View view) {
+        Log.i("MAIN", "Age: " + age);
         // 팝업 다이얼로그 생성
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.custom_dialog_layout, null);
