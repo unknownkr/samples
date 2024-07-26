@@ -1,0 +1,103 @@
+import json
+import os
+from datetime import datetime, date, time
+from tkinter import Tk, Label, Button
+
+# Model
+class ScheduleModel:
+    def __init__(self, json_file):
+        self.json_file = json_file
+        self.schedules = self.load_schedules()
+
+    def load_schedules(self):
+        with open(self.json_file, 'r') as file:
+            return json.load(file)
+
+    def get_today_schedule(self):
+        today = datetime.today().strftime('%Y-%m-%d')
+        return [s for s in self.schedules if s['date'] == today]
+
+# View
+class ScheduleView:
+    def __init__(self, root):
+        self.root = root
+        self.label = Label(root, text="No schedule for today.")
+        self.label.pack()
+        self.start_button = Button(root, text="Start Monitoring", command=self.start_monitoring)
+        self.start_button.pack()
+        self.stop_button = Button(root, text="Stop Monitoring", command=self.stop_monitoring)
+        self.stop_button.pack()
+        self.monitoring = False
+
+    def update_label(self, text):
+        self.label.config(text=text)
+
+    def start_monitoring(self):
+        self.monitoring = True
+
+    def stop_monitoring(self):
+        self.monitoring = False
+
+# Controller
+class ScheduleController:
+    def __init__(self, model, view):
+        self.model = model
+        self.view = view
+        self.monitored_files = set()
+        self.completed_files = set()
+        self.current_date = datetime.today().strftime('%Y-%m-%d')
+
+    def check_today_schedule(self):
+        today_schedule = self.model.get_today_schedule()
+        if today_schedule:
+            self.view.update_label(f"Today's Schedule: {today_schedule}")
+            self.create_skin_folder()
+            self.schedule_monitoring(today_schedule[0]['start_time'])
+        else:
+            self.view.update_label("No schedule for today.")
+
+    def create_skin_folder(self):
+        os.makedirs('skin', exist_ok=True)
+
+    def schedule_monitoring(self, start_time):
+        now = datetime.now().time()
+        start_time_obj = datetime.strptime(start_time, '%H:%M').time()
+        delay = 0
+        if now < start_time_obj:
+            delay = (datetime.combine(date.today(), start_time_obj) - datetime.now()).total_seconds() * 1000
+        self.view.root.after(int(delay), self.monitor_skin_folder)
+
+    def monitor_skin_folder(self):
+        if self.view.monitoring:
+            today = datetime.today().strftime('%Y-%m-%d')
+            if today != self.current_date:
+                self.end_experiment()
+                self.current_date = today
+                self.check_today_schedule()
+            else:
+                self.check_new_files()
+                self.view.root.after(3000, self.monitor_skin_folder)  # 3 seconds
+
+    def check_new_files(self):
+        files = sorted([f for f in os.listdir('skin') if f.isdigit() and f not in self.completed_files])
+        if files:
+            new_file = files[0]
+            self.process_file(new_file)
+            self.completed_files.add(new_file)
+
+    def process_file(self, file):
+        # 빈 함수
+        pass
+
+    def end_experiment(self):
+        # 빈 함수
+        pass
+
+if __name__ == "__main__":
+    root = Tk()
+    root.title("Schedule Monitor")
+    model = ScheduleModel('schedule.json')
+    view = ScheduleView(root)
+    controller = ScheduleController(model, view)
+    controller.check_today_schedule()
+    root.mainloop()
