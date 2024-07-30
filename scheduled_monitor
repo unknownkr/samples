@@ -46,6 +46,7 @@ class ScheduleController:
         self.monitored_files = set()
         self.completed_files = set()
         self.current_date = datetime.today().strftime('%Y-%m-%d')
+									self.current_file_index = 0  # 현재 확인 중인 파일 인덱스
 
     def check_today_schedule(self):
         today_schedule = self.model.get_today_schedule()
@@ -79,6 +80,25 @@ class ScheduleController:
                 self.view.root.after(3000, self.monitor_skin_folder)  # 3 seconds
 
     def check_new_files(self):
+        file_name = str(self.current_file_index)
+        file_path = os.path.join('skin', file_name)
+        
+        # 파일이 존재하는지 확인
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, 'r') as file:
+                    # 파일 처리 로직 (파일 내용을 읽어와 처리)
+                    self.process_file(file)
+                    self.completed_files.add(file_name)
+                    self.current_file_index += 1  # 다음 파일로 이동
+
+            except IOError:
+                # 파일이 잠겨있어서 열 수 없는 경우
+                pass
+        else:
+            # 파일이 존재하지 않는 경우
+            pass
+
         files = sorted([f for f in os.listdir('skin') if f.isdigit() and f not in self.completed_files])
         if files:
             new_file = files[0]
