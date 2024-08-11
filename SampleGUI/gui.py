@@ -30,8 +30,16 @@ class GUI:
 
         # Select Block
         self.add_separator('Select')
-        self.select_frame = tk.Frame(self.window)
-        self.select_frame.pack(fill=tk.X, padx=25, pady=10)
+        # Create a new frame to hold the select_frame and run_button_frame
+        self.control_frame = tk.Frame(self.window)
+        self.control_frame.pack(fill=tk.X, padx=25, pady=10)
+
+        # Configure the columns to expand equally
+        self.control_frame.columnconfigure(0, weight=1)
+        self.control_frame.columnconfigure(1, weight=1)
+
+        self.select_frame = tk.Frame(self.control_frame)
+        self.select_frame.grid(row=0, column=0, sticky='nsew')  # Place the select_frame in the left column
         self.chart_check = tk.Checkbutton(self.select_frame, text="Chart", variable=self.chart_var)
         self.chart_check.pack(anchor='w')
         self.upload_check = tk.Checkbutton(self.select_frame, text="Upload", variable=self.upload_var)
@@ -41,8 +49,8 @@ class GUI:
         # Tkinter에서 위젯을 가운데 정렬하려면 pack 메서드의 anchor 옵션을 사용할 수 있습니다. 그러나 이 옵션은 위젯의 위치를
         # 조정하는 것이지, 위젯의 너비를 조정하는 것은 아닙니다. 따라서, Run 버튼을 가운데에 배치하려면 Run 버튼을 감싸는
         # Frame 위젯을 만들고, 이 Frame 위젯을 가로로 확장하여 Run 버튼을 가운데에 배치할 수 있습니다.
-        self.run_button_frame = tk.Frame(self.window)
-        self.run_button_frame.pack(fill=tk.X, padx=25, pady=10)  # Adjust padding as needed
+        self.run_button_frame = tk.Frame(self.control_frame)
+        self.run_button_frame.grid(row=0, column=1, sticky='nsew')  # Place the run_button_frame in the right column
         # Create a new frame to hold the Run button
         self.run_button_inner_frame = tk.Frame(self.run_button_frame)
         self.run_button_inner_frame.pack(expand=True)
